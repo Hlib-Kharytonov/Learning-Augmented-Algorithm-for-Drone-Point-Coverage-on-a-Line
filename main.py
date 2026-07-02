@@ -34,6 +34,17 @@ if __name__ == "__main__":
     x,y = zip(*field.drone.movement_track)
     
     plt.plot(x,y,"b-")
+    
+    field.drone.reset()
+    print("=== BETA-HEDGE algorithm test ===")
+    for i, req in enumerate(field.requests):
+        print(f"iteration {i}:")
+        field.drone.beta_hedge_algorithm(req.x)
+
+
+    x,y = zip(*field.drone.movement_track)
+    
+    plt.plot(x,y,"y-")
     plt.show()
     # plt.savefig('my_simulation.png')
     

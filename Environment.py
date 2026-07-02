@@ -12,4 +12,4 @@ class Environment:
         
     def spawn_requests(self, nb_requests, mu, sig):
         self.requests = [Request(random.gauss(mu,sig),self.AOV) for _ in range(nb_requests)]
-        # self.requests.sort(key=lambda req: abs(req.x))
+        self.requests.sort(key=lambda req: abs(req.x))
