@@ -1,8 +1,4 @@
 import math
-import random
-import matplotlib.pyplot as plt
-
-#random.seed(42)
 
 class Request:
     
@@ -11,9 +7,12 @@ class Request:
         self.feas_cone=feas_cone 
 
 class Drone:
-    def __init__(self, alpha):
+    def __init__(self):
         self.x = self.y = 0.0
-        self.alpha = alpha
+        
+        self.alpha = math.pi/4
+        self.beta = math.pi/9.666		#as our drone has fixed  AOV of pi/4 
+        
         self.total_distance = 0.0
         self.min_x_seen = 0.0
         self.max_x_seen = 0.0
@@ -50,7 +49,7 @@ class Drone:
         self.move_straight_up(requiredY) 
 
 
-    def move_greedy(self, target_x, target_y):
+    def move_zigzag(self, target_x, target_y):
         
         if target_y >= self.y:
             distance_flown = math.dist((self.x, self.y),(target_x,target_y))
@@ -72,61 +71,7 @@ class Drone:
         distance_to_edge = (self.max_x_seen - self.min_x_seen)/2.0
         requiredY = distance_to_edge / math.tan(self.alpha)
 
-        self.move_greedy(apex_x, requiredY)
-
-
-
-
-
-class Environment:
-    AOV = math.pi/4 # <-- CHANGE AOV HERE
-    extr_left_distance = 0.0
-    extr_right_distance = 0.0
-    def __init__(self):
-        self.drone = Drone(self.AOV) 
-        self.requests = []
+        self.move_zigzag(apex_x, requiredY)
         
-    def spawn_requests(self, nb_requests, mu, sig):
-        self.requests = [Request(random.gauss(mu,sig),self.AOV) for _ in range(nb_requests)]
-        # self.requests.sort(key=lambda req: abs(req.x))
 
-
-
-
-if __name__ == "__main__":
-    print("=== test simulation ===")
-    field = Environment()
-    field.spawn_requests(nb_requests=100, mu=100.0, sig=100.0)
-    
-    print(f"{len(field.requests)} requests has been generated. Their coordinatest:") # test the order of points
-    for i, req in enumerate(field.requests):
-       print(f"request {i+1}: x = {req.x:.2f}")
-       
-       
-    print("=== STRAIGHT-UP algorithm test ===")
-    for i, req in enumerate(field.requests):
-        print(f"iteration {i}:")
-        field.drone.straight_up_algorithm(req.x)
         
-    n=len(field.requests)
-    plt.plot([r.x for r in field.requests],[0]*n,"ko")
-    x,y = zip(*field.drone.movement_track)
-    
-    plt.plot(x,y,"r-")
-    # plt.show()
-        
-        
-    field.drone.reset()
-    print("=== GREEDY algorithm test ===")
-    for i, req in enumerate(field.requests):
-        print(f"iteration {i}:")
-        field.drone.greedy_algorithm(req.x)
-
-
-    x,y = zip(*field.drone.movement_track)
-    
-    plt.plot(x,y,"b-")
-    plt.show()
-    # plt.savefig('my_simulation.png')
-    
-    
