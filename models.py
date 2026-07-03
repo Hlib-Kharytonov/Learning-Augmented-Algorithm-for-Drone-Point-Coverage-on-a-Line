@@ -1,4 +1,5 @@
 import math
+import statistics
 
 class Request:
     
@@ -17,6 +18,7 @@ class Drone:
         self.min_x_seen = 0.0
         self.max_x_seen = 0.0
         self.movement_track=[(0,0)]
+        self.drone_memory = []
 
         
     def reset(self):
@@ -25,6 +27,7 @@ class Drone:
         self.min_x_seen = 0.0
         self.max_x_seen = 0.0
         self.movement_track=[(0,0)]
+        self.drone_memory = []
         
     def get_coverage_radius(self):
         return self.y * math.tan(self.alpha)
@@ -105,5 +108,33 @@ class Drone:
         target_x_final = self.x + direction * (target_y - self.y) * k
 
         self.move_zigzag(target_x_final, target_y)
-     
         
+        
+    def median_hedge_algo(self, target_x):
+        
+        self.drone_memory.append(target_x)
+        L = self.min_x_seen = min(self.min_x_seen,target_x)
+        R = self.max_x_seen = max(self.max_x_seen,target_x)
+        
+        current_coverage = self.get_coverage_radius()
+        
+        if self.x - current_coverage <= self.min_x_seen and self.x + current_coverage >= self.max_x_seen:
+            return
+        
+        c = math.tan(self.alpha)
+        k= math.tan(self.beta)
+        
+        median = statistics.median(self.drone_memory)
+        direction = 1 if median >= self.x else -1
+     
+        if direction == 1:
+            y_left = (self.x - L - self.y * k) / (c - k)
+            y_right = (R - self.x + self.y * k) / (c + k)
+        else:
+            y_left = (self.x - L + self.y * k) / (c + k)
+            y_right = (R - self.x - self.y * k) / (c - k)
+            
+        target_y = max(max(y_left, y_right), self.y)
+
+        target_x_final = self.x + direction * (target_y - self.y) * k
+        self.move_zigzag(target_x_final, target_y)
