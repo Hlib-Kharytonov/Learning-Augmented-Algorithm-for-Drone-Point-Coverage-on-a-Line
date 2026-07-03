@@ -44,7 +44,7 @@ if __name__ == "__main__":
 
     x,y = zip(*field.drone.movement_track)
     
-    plt.plot(x,y,"y-")
+    plt.plot(x,y,"g-")
     plt.show()
     # plt.savefig('my_simulation.png')
     
