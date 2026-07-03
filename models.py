@@ -49,7 +49,7 @@ class Drone:
         self.move_straight_up(requiredY) 
 
 
-    def move_zigzag(self, target_x, target_y):
+    def move_greedy(self, target_x, target_y):
         
         if target_y >= self.y:
             distance_flown = math.dist((self.x, self.y),(target_x,target_y))
@@ -71,12 +71,24 @@ class Drone:
         distance_to_edge = (self.max_x_seen - self.min_x_seen)/2.0
         requiredY = distance_to_edge / math.tan(self.alpha)
 
-        self.move_zigzag(apex_x, requiredY)
+        self.move_greedy(apex_x, requiredY)
         
     def calculate_dist_beta(self,r):
         return (math.tan(self.alpha)+(1+2*r)*math.tan(self.beta)) / (((math.tan(self.alpha)+math.tan(self.beta))**2)*math.cos(self.beta))
         
         
+        
+    def move_beta(self, target_x, target_y):
+        
+        if target_y >= self.y:            
+            self.x = target_x
+            self.y = target_y
+            self.movement_track.append((self.x,self.y))
+            print(f"Drone moved to ({self.x:.2f},{self.y:.2f}). total distance: {self.total_distance:.2f}")
+        
+        else:
+            print("drone didn't moove")
+            
     def beta_hedge_algorithm(self, target_x):
         
         self.min_x_seen = min(self.min_x_seen,target_x)
@@ -84,22 +96,24 @@ class Drone:
         
         current_coverage = self.get_coverage_radius()
         
-        # Если L и R уже внутри текущего конуса, не двигаемся
         if self.x - current_coverage <= self.min_x_seen and self.x + current_coverage >= self.max_x_seen:
             return
         
         r = abs(self.max_x_seen - self.min_x_seen)
-        dist = self.calculate_dist_beta(r)
+        newDist = self.calculate_dist_beta(r)
+        
+        hypotenuse = newDist - self.total_distance 
+        self.total_distance = newDist
         
         apex_x = (self.min_x_seen + self.max_x_seen) / 2.0
         direction = 1 if apex_x > self.x else -1
         
-        x_X0_U_Zprim = dist*math.cos(math.pi/2-self.beta)
-        y_X0_U_Zprim = dist*math.sin(math.pi/2-self.beta)
+        x_X0_U_Zprim = hypotenuse*math.cos(math.pi/2-self.beta)
+        y_X0_U_Zprim = hypotenuse*math.sin(math.pi/2-self.beta)
         
         x = self.x + (direction * x_X0_U_Zprim)
         y = self.y + y_X0_U_Zprim
         
-        self.move_zigzag(x,y)
+        self.move_beta(x,y)
      
         
