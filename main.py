@@ -6,7 +6,7 @@ import math
 if __name__ == "__main__":
     print("=== test simulation ===")
     field = Environment.Environment()
-    field.spawn_requests(nb_requests=10, mu=100.0, sig=100.0)
+    field.spawn_requests(nb_requests=100, mu=100.0, sig=100.0)
     
     print(f"{len(field.requests)} requests has been generated. Their coordinatest:") # test the order of points
     for i, req in enumerate(field.requests):
@@ -56,17 +56,17 @@ if __name__ == "__main__":
     
     
     field.drone.reset()
-    print("=== MEDIAN-HEDGE algorithm test ===")
+    print("=== MEAN-HEDGE algorithm test ===")
     for i, req in enumerate(field.requests):
         print(f"iteration {i}:")
-        field.drone.median_hedge_algo(req.x)
+        field.drone.mean_hedge_algo(req.x)
 
 
     x,y = zip(*field.drone.movement_track)
     
     dist_median = field.drone.total_distance
     
-    plt.plot(x,y,"y-", label="MEDIAN-HEDGE")
+    plt.plot(x,y,"y-", label="MEAN-HEDGE")
     
     
     print("\n" + "="*30)
@@ -74,7 +74,7 @@ if __name__ == "__main__":
     print(f"STRAIGHT-UP:  {dist_straight:.2f}")
     print(f"GREEDY:       {dist_greedy:.2f}")
     print(f"BETA-HEDGE:   {dist_beta:.2f}")
-    print(f"MEDIAN-HEDGE: {dist_median:.2f}")
+    print(f"MEAN-HEDGE: {dist_median:.2f}")
     print("="*30 + "\n")
     
     
@@ -88,7 +88,7 @@ if __name__ == "__main__":
     
     
     plt.legend(loc="best")
-    plt.show()
-    # plt.savefig('my_simulation.png')
+    # plt.show()
+    plt.savefig('my_simulation.png')
     
     

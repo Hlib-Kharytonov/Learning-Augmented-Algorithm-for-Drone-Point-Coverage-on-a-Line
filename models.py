@@ -110,7 +110,7 @@ class Drone:
         self.move_zigzag(target_x_final, target_y)
         
         
-    def median_hedge_algo(self, target_x):
+    def mean_hedge_algo(self, target_x):
         
         self.drone_memory.append(target_x)
         L = self.min_x_seen = min(self.min_x_seen,target_x)
@@ -124,7 +124,7 @@ class Drone:
         c = math.tan(self.alpha)
         k= math.tan(self.beta)
         
-        median = statistics.median(self.drone_memory)
+        median = statistics.mean(self.drone_memory)
         direction = 1 if median >= self.x else -1
      
         if direction == 1:
@@ -138,3 +138,20 @@ class Drone:
 
         target_x_final = self.x + direction * (target_y - self.y) * k
         self.move_zigzag(target_x_final, target_y)
+        
+    def learning_straight_up_algorithm(self, target_x):
+        
+        self.drone_memory.append(target_x)
+        L = self.min_x_seen = min(self.min_x_seen,target_x)
+        R = self.max_x_seen = max(self.max_x_seen,target_x)
+        
+        current_coverage = self.get_coverage_radius()
+        
+        if self.x - current_coverage <= self.min_x_seen and self.x + current_coverage >= self.max_x_seen:
+            return
+        
+        c = math.tan(self.alpha)
+        k= math.tan(self.beta)
+        
+        median = statistics.mean(self.drone_memory)
+        direction = 1 if median >= self.x else -1
