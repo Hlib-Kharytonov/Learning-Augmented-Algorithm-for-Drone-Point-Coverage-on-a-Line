@@ -68,6 +68,18 @@ if __name__ == "__main__":
     
     plt.plot(x,y,"y-", label="MEAN-HEDGE")
     
+     
+    field.drone.reset()
+    print("=== LEARNING STRAIGHT UP algorithm test ===")
+    for i, req in enumerate(field.requests):
+        print(f"iteration {i}:")
+        field.drone.learning_straight_up_algorithm(req.x)
+        
+    x,y = zip(*field.drone.movement_track)
+    
+    dist_LSA = field.drone.total_distance
+    
+    plt.plot(x,y,"ro-", label="LEARNING STRAIGHT UP")
     
     print("\n" + "="*30)
     print("results::")
@@ -75,6 +87,7 @@ if __name__ == "__main__":
     print(f"GREEDY:       {dist_greedy:.2f}")
     print(f"BETA-HEDGE:   {dist_beta:.2f}")
     print(f"MEAN-HEDGE: {dist_median:.2f}")
+    print(f"LEARNING STRAIGHT UP: {dist_LSA:.2f}")
     print("="*30 + "\n")
     
     
@@ -88,7 +101,7 @@ if __name__ == "__main__":
     
     
     plt.legend(loc="best")
-    # plt.show()
-    plt.savefig('my_simulation.png')
+    plt.show()
+    # plt.savefig('my_simulation.pdf')
     
     

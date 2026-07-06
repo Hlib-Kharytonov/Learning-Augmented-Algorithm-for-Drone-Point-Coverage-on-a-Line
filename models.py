@@ -150,8 +150,25 @@ class Drone:
         if self.x - current_coverage <= self.min_x_seen and self.x + current_coverage >= self.max_x_seen:
             return
         
-        c = math.tan(self.alpha)
+        c= math.tan(self.alpha)
         k= math.tan(self.beta)
         
-        median = statistics.mean(self.drone_memory)
-        direction = 1 if median >= self.x else -1
+        apex_x = (self.min_x_seen + self.max_x_seen) / 2.0
+        direction = 1 if apex_x > self.x else -1
+        
+        mean = statistics.mean(self.drone_memory)
+        
+        if (self.x >= mean and mean >= apex_x) or (self.x <= mean and mean <= apex_x) :
+            x = mean
+            if direction == 1:
+                
+            else:
+                
+            self.move_zigzag(x,y)
+        else:
+            self.beta_hedge_algorithm(target_x)
+        return
+        
+        
+        
+        
