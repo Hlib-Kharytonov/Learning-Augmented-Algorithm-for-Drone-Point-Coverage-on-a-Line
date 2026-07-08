@@ -2,7 +2,7 @@
 
 This repository contains the source code, simulation environment, and research results conducted during an internship at the **LIP6 laboratory (Sorbonne Université)**. 
 
-The project focuses on the optimization of drone trajectories for the "Point Coverage on a Line" problem. The primary objective is to enhance classical competitive algorithms by integrating Machine Learning predictions (ML Oracle).
+The project focuses on the optimization of drone trajectories for the "Point Coverage on a Line" problem. The primary objective is to enhance classical competitive algorithms.
 
 ## Simulation Results & Report
 The comprehensive analysis of the algorithms, trajectory plots, and performance metrics.
