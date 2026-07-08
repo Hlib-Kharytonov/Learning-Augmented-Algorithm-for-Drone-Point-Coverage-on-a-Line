@@ -27,7 +27,7 @@ if __name__ == "__main__":
     
     dist_straight = field.drone.total_distance
     
-    ax3.plot(x,y,"r-", label="STRAIGHT-UP")
+    ax3.plot(x,y, label="STRAIGHT-UP")
 
         
         
@@ -42,7 +42,7 @@ if __name__ == "__main__":
     
     dist_greedy = field.drone.total_distance
     
-    ax3.plot(x,y,"b-", label="GREEDY")
+    ax3.plot(x,y, label="GREEDY")
     
     field.drone.reset()
     print("=== BETA-HEDGE algorithm test ===")
@@ -55,7 +55,7 @@ if __name__ == "__main__":
     
     dist_beta = field.drone.total_distance
     
-    ax3.plot(x,y,"g-", label="BETA-HEDGE")
+    ax3.plot(x,y, label="BETA-HEDGE")
     
     
     field.drone.reset()
@@ -69,7 +69,7 @@ if __name__ == "__main__":
     
     dist_median = field.drone.total_distance
     
-    ax3.plot(x,y,"y-", label="MEAN-HEDGE")
+    ax3.plot(x,y, label="MEAN-HEDGE")
     
      
     field.drone.reset()
@@ -82,7 +82,7 @@ if __name__ == "__main__":
     
     dist_LBA = field.drone.total_distance
     
-    ax3.plot(x,y,"ro-", label="LEARNING STRAIGHT UP")
+    ax3.plot(x,y, label="LEARNING STRAIGHT UP")
     
     
     
@@ -96,7 +96,7 @@ if __name__ == "__main__":
     
     dist_LGA = field.drone.total_distance
     
-    ax3.plot(x,y,"bo-", label="LEARNING GREEDY UP")
+    ax3.plot(x,y, label="LEARNING GREEDY UP")
     # 
     # print("\n" + "="*30)
     # print("results::")
@@ -268,8 +268,9 @@ if __name__ == "__main__":
 
     # plt.show()
 
-    plt.tight_layout() # Выравнивает графики
+    plt.tight_layout()
     plt.savefig("high_res_plots.png", dpi=300, bbox_inches='tight')
+    plt.savefig("high_res_plots.pdf", dpi=300, bbox_inches='tight')
     plt.show()
     
     
