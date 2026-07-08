@@ -6,7 +6,8 @@ import random
 
 if __name__ == "__main__":
     random.seed(17)
-    fig, (ax1, ax2, ax3) = plt.subplots(nrows=1, ncols=3, figsize=(18, 7))
+    # Делаем шире и выше, включаем HD-качество
+    fig, (ax1, ax2, ax3) = plt.subplots(nrows=1, ncols=3, figsize=(18, 6.5), dpi=300)   
     print("=== test simulation ===")
     field = Environment.Environment()
     field.spawn_requests(nb_requests=500, mu=100.0, sig=100.0)
@@ -116,7 +117,7 @@ if __name__ == "__main__":
     ax3.plot([final_x, final_x - coverage_radius], [final_y, 0], "g--", alpha=0.5)
     ax3.plot([final_x, final_x + coverage_radius], [final_y, 0], "g--", alpha=0.5)
     ax3.set_title(r'trajectories of the drone for different algorithms')
-    ax3.legend(loc=2, fontsize='small')
+    ax3.legend(loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=2, fontsize='small')
 
 
 #======================================== Mu dependence test =========================================
@@ -267,6 +268,8 @@ if __name__ == "__main__":
 
     # plt.show()
 
-    plt.savefig('my_simulation.pdf')
+    plt.tight_layout() # Выравнивает графики
+    plt.savefig("high_res_plots.png", dpi=300, bbox_inches='tight')
+    plt.show()
     
     

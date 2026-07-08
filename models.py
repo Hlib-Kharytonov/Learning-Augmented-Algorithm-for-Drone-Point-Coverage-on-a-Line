@@ -212,7 +212,7 @@ class Drone:
             y = (x-L)/c
             self.move_zigzag(x,y)
         else:
-            self.beta_hedge_algorithm(target_x)
+            self.greedy_algorithm(target_x)
         return
         
         
