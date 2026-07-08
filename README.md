@@ -5,13 +5,13 @@ This repository contains the source code, simulation environment, and research r
 The project focuses on the optimization of drone trajectories for the "Point Coverage on a Line" problem. The primary objective is to enhance classical competitive algorithms by integrating Machine Learning predictions (ML Oracle).
 
 ## Simulation Results & Report
-The comprehensive analysis of the algorithms, trajectory plots, and performance metrics are documented in the PDF report.
+The comprehensive analysis of the algorithms, trajectory plots, and performance metrics.
 
 <p align="center">
   <img src="high_res_plots.png" width="850" alt="Графики эффективности">
 </p>
 
-*(Clicking the link will open the PDF directly inside GitHub's built-in viewer).*
+
 
 ## Implemented Algorithms
 
