@@ -130,58 +130,56 @@ if __name__ == "__main__":
         "LEARNING GREEDY UP": [] }
     
     mu_samples = [0, 10, 100, 500, 1000]
+    k = 20 # То самое количество инстансов (удвоенное)
+
     for mu in mu_samples:
-        field = Environment.Environment()
-        field.spawn_requests(nb_requests=500, mu=mu, sig=100.0)
+        sigma_stats = {algo: 0 for algo in stats.keys()}
         
-        tmp = 0
-        for i in range(10):
+
+        for i in range(k):
+            field = Environment.Environment()
+            field.spawn_requests(nb_requests=500, mu=mu, sig=100)
+            
+            
+            # --- STRAIGHT-UP ---
             for req in field.requests:
                 field.drone.straight_up_algorithm(req.x)
-            tmp = tmp + field.drone.total_distance
+            sigma_stats["STRAIGHT-UP"] += field.drone.total_distance
             field.drone.reset()
-        stats["STRAIGHT-UP"].append(tmp/10)
-        
-        
-        tmp = 0
-        for i in range(10):
+            
+            # --- GREEDY ---
             for req in field.requests:
                 field.drone.greedy_algorithm(req.x)
-            tmp = tmp + field.drone.total_distance
+            sigma_stats["GREEDY"] += field.drone.total_distance
             field.drone.reset()
-        stats["GREEDY"].append(tmp/10)
-        
-        tmp = 0
-        for i in range(10):
+            
+            # --- BETA-HEDGE ---
             for req in field.requests:
                 field.drone.beta_hedge_algorithm(req.x)
-            tmp = tmp + field.drone.total_distance
+            sigma_stats["BETA-HEDGE"] += field.drone.total_distance
             field.drone.reset()
-        stats["BETA-HEDGE"].append(tmp/10)
-        
-        tmp = 0
-        for i in range(10):
+            
+            # --- MEAN-HEDGE ---
             for req in field.requests:
                 field.drone.mean_hedge_algorithm(req.x)
-            tmp = tmp + field.drone.total_distance
+            sigma_stats["MEAN-HEDGE"] += field.drone.total_distance
             field.drone.reset()
-        stats["MEAN-HEDGE"].append(tmp/10)
-        
-        tmp = 0
-        for i in range(10):
+            
+            # --- LEARNING BETA UP ---
             for req in field.requests:
                 field.drone.learning_beta_up_algorithm(req.x)
-            tmp = tmp + field.drone.total_distance
+            sigma_stats["LEARNING BETA UP"] += field.drone.total_distance
             field.drone.reset()
-        stats["LEARNING BETA UP"].append(tmp/10)
-        
-        tmp = 0
-        for i in range(10):
+            
+            # --- LEARNING GREEDY UP ---
             for req in field.requests:
                 field.drone.learning_greedy_up_algorithm(req.x)
-            tmp = tmp + field.drone.total_distance
+            sigma_stats["LEARNING GREEDY UP"] += field.drone.total_distance
             field.drone.reset()
-        stats["LEARNING GREEDY UP"].append(tmp/10)
+
+        # 3. Усредняем результаты за k прогонов и добавляем в финальную статистику
+        for algo in stats.keys():
+            stats[algo].append(sigma_stats[algo] / k)
 
     
     df = pd.DataFrame(stats, index=mu_samples)
@@ -192,6 +190,7 @@ if __name__ == "__main__":
     ax1.set_ylabel('Distance Flown')
 
     fig.suptitle(r'Effectiveness of Algorithms', fontsize=14, y=0.95)
+    fig.suptitle('Effectiveness of Algorithms ($k=20$ instances, $N=500$ targets)', fontsize=16, y=1.02)
 
 
 #======================================== SIGMA dependence test =========================================
@@ -204,64 +203,62 @@ if __name__ == "__main__":
         "LEARNING GREEDY UP": [] }
     
     sigma_samples = [10, 50, 100, 150, 500]
+    k = 20 # То самое количество инстансов (удвоенное)
+
     for sigma in sigma_samples:
-        field = Environment.Environment()
-        field.spawn_requests(nb_requests=500, mu=0, sig=sigma)
+        sigma_stats = {algo: 0 for algo in stats.keys()}
         
-        tmp = 0
-        for i in range(10):
+
+        for i in range(k):
+            field = Environment.Environment()
+            field.spawn_requests(nb_requests=500, mu=100, sig=sigma)
+            
+            
+            # --- STRAIGHT-UP ---
             for req in field.requests:
                 field.drone.straight_up_algorithm(req.x)
-            tmp = tmp + field.drone.total_distance
+            sigma_stats["STRAIGHT-UP"] += field.drone.total_distance
             field.drone.reset()
-        stats["STRAIGHT-UP"].append(tmp/10)
-        
-        
-        tmp = 0
-        for i in range(10):
+            
+            # --- GREEDY ---
             for req in field.requests:
                 field.drone.greedy_algorithm(req.x)
-            tmp = tmp + field.drone.total_distance
+            sigma_stats["GREEDY"] += field.drone.total_distance
             field.drone.reset()
-        stats["GREEDY"].append(tmp/10)
-        
-        tmp = 0
-        for i in range(10):
+            
+            # --- BETA-HEDGE ---
             for req in field.requests:
                 field.drone.beta_hedge_algorithm(req.x)
-            tmp = tmp + field.drone.total_distance
+            sigma_stats["BETA-HEDGE"] += field.drone.total_distance
             field.drone.reset()
-        stats["BETA-HEDGE"].append(tmp/10)
-        
-        tmp = 0
-        for i in range(10):
+            
+            # --- MEAN-HEDGE ---
             for req in field.requests:
                 field.drone.mean_hedge_algorithm(req.x)
-            tmp = tmp + field.drone.total_distance
+            sigma_stats["MEAN-HEDGE"] += field.drone.total_distance
             field.drone.reset()
-        stats["MEAN-HEDGE"].append(tmp/10)
-        
-        tmp = 0
-        for i in range(10):
+            
+            # --- LEARNING BETA UP ---
             for req in field.requests:
                 field.drone.learning_beta_up_algorithm(req.x)
-            tmp = tmp + field.drone.total_distance
+            sigma_stats["LEARNING BETA UP"] += field.drone.total_distance
             field.drone.reset()
-        stats["LEARNING BETA UP"].append(tmp/10)
-        
-        tmp = 0
-        for i in range(10):
+            
+            # --- LEARNING GREEDY UP ---
             for req in field.requests:
                 field.drone.learning_greedy_up_algorithm(req.x)
-            tmp = tmp + field.drone.total_distance
+            sigma_stats["LEARNING GREEDY UP"] += field.drone.total_distance
             field.drone.reset()
-        stats["LEARNING GREEDY UP"].append(tmp/10)
 
+        # 3. Усредняем результаты за k прогонов и добавляем в финальную статистику
+        for algo in stats.keys():
+            stats[algo].append(sigma_stats[algo] / k)
+        
     
     df = pd.DataFrame(stats, index=sigma_samples)
     ax2.plot(sigma_samples, df, marker='o')
     ax2.legend(df.columns, loc=2, fontsize='small')
-    ax2.set_title(r'dependence of sigma on distance flown, mu=0')
+    ax2.set_title(r'dependence of sigma on distance flown, mu=100')
     ax2.set_xlabel(r'Esperance($\sigma$)')
     ax2.set_ylabel('Distance Flown')
 
@@ -270,6 +267,6 @@ if __name__ == "__main__":
     plt.tight_layout()
     plt.savefig("high_res_plots.png", dpi=300, bbox_inches='tight')
     plt.savefig("high_res_plots.pdf", dpi=300, bbox_inches='tight')
-    plt.show()
+    # plt.show()
     
     
