@@ -8,7 +8,7 @@ The project focuses on the optimization of drone trajectories for the "Point Cov
 The comprehensive analysis of the algorithms, trajectory plots, and performance metrics.
 
 <p align="center">
-  <img src="high_res_plots.png" width="850" alt="Графики эффективности">
+  <img src="high_res_plots.png" width="850" alt="graphs">
 </p>
 
 
