@@ -284,6 +284,8 @@ class Drone:
 
         self.move_zigzag(chosen_target_x, chosen_target_y)
 
+        
+
 
 
 

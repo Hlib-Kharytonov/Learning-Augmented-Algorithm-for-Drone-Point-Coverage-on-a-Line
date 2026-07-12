@@ -153,48 +153,50 @@ if __name__ == "__main__":
         for i in range(k):
             field = Environment.Environment()
             field.spawn_requests(nb_requests=500, mu=mu, sig=100)
+
+            competive_ratio = field.competitive_ratio()
             
             
             # --- STRAIGHT-UP ---
             for req in field.requests:
                 field.drone.straight_up_algorithm(req.x)
-            sigma_stats["STRAIGHT-UP"] += field.drone.total_distance
+            sigma_stats["STRAIGHT-UP"] += field.drone.total_distance/competive_ratio
             field.drone.reset()
             
             # --- GREEDY ---
             for req in field.requests:
                 field.drone.greedy_algorithm(req.x)
-            sigma_stats["GREEDY"] += field.drone.total_distance
+            sigma_stats["GREEDY"] += field.drone.total_distance/competive_ratio
             field.drone.reset()
             
             # --- BETA-HEDGE ---
             for req in field.requests:
                 field.drone.beta_hedge_algorithm(req.x)
-            sigma_stats["BETA-HEDGE"] += field.drone.total_distance
+            sigma_stats["BETA-HEDGE"] += field.drone.total_distance/competive_ratio
             field.drone.reset()
             
             # --- MEAN-HEDGE ---
             for req in field.requests:
                 field.drone.mean_hedge_algorithm(req.x)
-            sigma_stats["MEAN-HEDGE"] += field.drone.total_distance
+            sigma_stats["MEAN-HEDGE"] += field.drone.total_distance/competive_ratio
             field.drone.reset()
             
             # --- LEARNING BETA UP ---
             for req in field.requests:
                 field.drone.learning_beta_up_algorithm(req.x)
-            sigma_stats["LEARNING BETA UP"] += field.drone.total_distance
+            sigma_stats["LEARNING BETA UP"] += field.drone.total_distance/competive_ratio
             field.drone.reset()
             
             # --- LEARNING GREEDY UP ---
             for req in field.requests:
                 field.drone.learning_greedy_up_algorithm(req.x)
-            sigma_stats["LEARNING GREEDY UP"] += field.drone.total_distance
+            sigma_stats["LEARNING GREEDY UP"] += field.drone.total_distance/competive_ratio
             field.drone.reset()
 
             # --- MWU ---
             for req in field.requests:
                 field.drone.MWU_algorithm(req.x)
-            sigma_stats["MWU"] += field.drone.total_distance
+            sigma_stats["MWU"] += field.drone.total_distance/competive_ratio
             field.drone.reset()
 
         # 3. Усредняем результаты за k прогонов и добавляем в финальную статистику
@@ -203,11 +205,12 @@ if __name__ == "__main__":
 
     
     df = pd.DataFrame(stats, index=mu_samples)
-    ax1.plot(mu_samples, df, marker='o')
-    ax1.legend(df.columns, loc=2, fontsize='small')
+    df.plot(ax=ax1, marker='o')
+
     ax1.set_title(r'dependence of mu on distance flown, sigma=100')
     ax1.set_xlabel(r'Esperance($\mu$)')
-    ax1.set_ylabel('Distance Flown')
+    ax1.set_ylabel('Competitive Ratio')
+    ax1.legend(loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=2, fontsize='small')
 
     fig.suptitle(r'Effectiveness of Algorithms', fontsize=14, y=0.95)
     fig.suptitle('Effectiveness of Algorithms ($k=20$ instances, $N=500$ targets)', fontsize=16, y=1.02)
@@ -232,47 +235,47 @@ if __name__ == "__main__":
         for i in range(k):
             field = Environment.Environment()
             field.spawn_requests(nb_requests=500, mu=100, sig=sigma)
-            
+            competive_ratio = field.competitive_ratio()
             
             # --- STRAIGHT-UP ---
             for req in field.requests:
                 field.drone.straight_up_algorithm(req.x)
-            sigma_stats["STRAIGHT-UP"] += field.drone.total_distance
+            sigma_stats["STRAIGHT-UP"] += field.drone.total_distance/competive_ratio
             field.drone.reset()
             
             # --- GREEDY ---
             for req in field.requests:
                 field.drone.greedy_algorithm(req.x)
-            sigma_stats["GREEDY"] += field.drone.total_distance
+            sigma_stats["GREEDY"] += field.drone.total_distance/competive_ratio
             field.drone.reset()
             
             # --- BETA-HEDGE ---
             for req in field.requests:
                 field.drone.beta_hedge_algorithm(req.x)
-            sigma_stats["BETA-HEDGE"] += field.drone.total_distance
+            sigma_stats["BETA-HEDGE"] += field.drone.total_distance/competive_ratio
             field.drone.reset()
             
             # --- MEAN-HEDGE ---
             for req in field.requests:
                 field.drone.mean_hedge_algorithm(req.x)
-            sigma_stats["MEAN-HEDGE"] += field.drone.total_distance
+            sigma_stats["MEAN-HEDGE"] += field.drone.total_distance/competive_ratio
             field.drone.reset()
             
             # --- LEARNING BETA UP ---
             for req in field.requests:
                 field.drone.learning_beta_up_algorithm(req.x)
-            sigma_stats["LEARNING BETA UP"] += field.drone.total_distance
+            sigma_stats["LEARNING BETA UP"] += field.drone.total_distance/competive_ratio
             field.drone.reset()
             
             # --- LEARNING GREEDY UP ---
             for req in field.requests:
                 field.drone.learning_greedy_up_algorithm(req.x)
-            sigma_stats["LEARNING GREEDY UP"] += field.drone.total_distance
+            sigma_stats["LEARNING GREEDY UP"] += field.drone.total_distance/competive_ratio
             field.drone.reset()
 
             for req in field.requests:
                 field.drone.MWU_algorithm(req.x)
-            sigma_stats["MWU"] += field.drone.total_distance
+            sigma_stats["MWU"] += field.drone.total_distance/competive_ratio
             field.drone.reset()
 
         # 3. Усредняем результаты за k прогонов и добавляем в финальную статистику
@@ -281,11 +284,13 @@ if __name__ == "__main__":
         
     
     df = pd.DataFrame(stats, index=sigma_samples)
-    ax2.plot(sigma_samples, df, marker='o')
-    ax2.legend(df.columns, loc=2, fontsize='small')
+    df.plot(ax=ax2, marker='o')
+
     ax2.set_title(r'dependence of sigma on distance flown, mu=100')
     ax2.set_xlabel(r'Esperance($\sigma$)')
-    ax2.set_ylabel('Distance Flown')
+    ax2.set_ylabel('Competitive Ratio')
+
+    ax2.legend(loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=2, fontsize='small')
 
     # plt.show()
 
