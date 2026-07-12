@@ -1,5 +1,6 @@
 import math
 import statistics
+import numpy as np
 
 class Request:
     
@@ -214,5 +215,33 @@ class Drone:
         else:
             self.greedy_algorithm(target_x)
         return
+        
+
+    def MWU_algorithm(self, target_x):
+        self.drone_memory.append(target_x)
+        L = self.min_x_seen = min(self.min_x_seen,target_x)
+        R = self.max_x_seen = max(self.max_x_seen,target_x)
+        
+        current_coverage = self.get_coverage_radius()
+        
+        if self.x - current_coverage <= self.min_x_seen and self.x + current_coverage >= self.max_x_seen:
+            return
+        
+        angles = [math.radians(i) for i in range(0, 90, 10)]
+        weights = [1.0] * len(angles)
+        probabilities = [w / sum(weights) for w in weights]
+        p = np.array(probabilities)
+        index = np.random.choice(len(angles), p=p)
+        beta = angles[index]
+
+        c = math.tan(self.alpha)
+        k = math.tan(beta)
+
+        
+
+
+
+
+
         
         
