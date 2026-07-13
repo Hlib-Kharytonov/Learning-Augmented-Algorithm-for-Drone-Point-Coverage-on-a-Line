@@ -144,64 +144,63 @@ if __name__ == "__main__":
         "MWU": [] }
     
     mu_samples = [0, 10, 100, 500, 1000]
-    k = 100 # То самое количество инстансов (удвоенное)
+    k = 100 
 
     for mu in mu_samples:
         sigma_stats = {algo: 0 for algo in stats.keys()}
-        
+        total_OPT = 0
 
         for i in range(k):
             field = Environment.Environment()
             field.spawn_requests(nb_requests=500, mu=mu, sig=100)
 
-            competive_ratio = field.competitive_ratio()
+            OPT = field.OPT()
             
             
             # --- STRAIGHT-UP ---
             for req in field.requests:
                 field.drone.straight_up_algorithm(req.x)
-            sigma_stats["STRAIGHT-UP"] += field.drone.total_distance/competive_ratio
+            sigma_stats["STRAIGHT-UP"] += field.drone.total_distance/OPT
             field.drone.reset()
             
             # --- GREEDY ---
             for req in field.requests:
                 field.drone.greedy_algorithm(req.x)
-            sigma_stats["GREEDY"] += field.drone.total_distance/competive_ratio
+            sigma_stats["GREEDY"] += field.drone.total_distance/OPT
             field.drone.reset()
             
             # --- BETA-HEDGE ---
             for req in field.requests:
                 field.drone.beta_hedge_algorithm(req.x)
-            sigma_stats["BETA-HEDGE"] += field.drone.total_distance/competive_ratio
+            sigma_stats["BETA-HEDGE"] += field.drone.total_distance/OPT
             field.drone.reset()
             
             # --- MEAN-HEDGE ---
             for req in field.requests:
                 field.drone.mean_hedge_algorithm(req.x)
-            sigma_stats["MEAN-HEDGE"] += field.drone.total_distance/competive_ratio
+            sigma_stats["MEAN-HEDGE"] += field.drone.total_distance/OPT
             field.drone.reset()
             
             # --- LEARNING BETA UP ---
             for req in field.requests:
                 field.drone.learning_beta_up_algorithm(req.x)
-            sigma_stats["LEARNING BETA UP"] += field.drone.total_distance/competive_ratio
+            sigma_stats["LEARNING BETA UP"] += field.drone.total_distance/OPT
             field.drone.reset()
             
             # --- LEARNING GREEDY UP ---
             for req in field.requests:
                 field.drone.learning_greedy_up_algorithm(req.x)
-            sigma_stats["LEARNING GREEDY UP"] += field.drone.total_distance/competive_ratio
+            sigma_stats["LEARNING GREEDY UP"] += field.drone.total_distance/OPT
             field.drone.reset()
 
             # --- MWU ---
             for req in field.requests:
                 field.drone.MWU_algorithm(req.x)
-            sigma_stats["MWU"] += field.drone.total_distance/competive_ratio
+            sigma_stats["MWU"] += field.drone.total_distance/OPT
             field.drone.reset()
 
-        # 3. Усредняем результаты за k прогонов и добавляем в финальную статистику
         for algo in stats.keys():
-            stats[algo].append(sigma_stats[algo] / k)
+            stats[algo].append(sigma_stats[algo] / k) 
 
     
     df = pd.DataFrame(stats, index=mu_samples)
@@ -235,50 +234,49 @@ if __name__ == "__main__":
         for i in range(k):
             field = Environment.Environment()
             field.spawn_requests(nb_requests=500, mu=100, sig=sigma)
-            competive_ratio = field.competitive_ratio()
+            OPT = field.OPT()
             
             # --- STRAIGHT-UP ---
             for req in field.requests:
                 field.drone.straight_up_algorithm(req.x)
-            sigma_stats["STRAIGHT-UP"] += field.drone.total_distance/competive_ratio
+            sigma_stats["STRAIGHT-UP"] += field.drone.total_distance/OPT
             field.drone.reset()
             
             # --- GREEDY ---
             for req in field.requests:
                 field.drone.greedy_algorithm(req.x)
-            sigma_stats["GREEDY"] += field.drone.total_distance/competive_ratio
+            sigma_stats["GREEDY"] += field.drone.total_distance/OPT
             field.drone.reset()
             
             # --- BETA-HEDGE ---
             for req in field.requests:
                 field.drone.beta_hedge_algorithm(req.x)
-            sigma_stats["BETA-HEDGE"] += field.drone.total_distance/competive_ratio
+            sigma_stats["BETA-HEDGE"] += field.drone.total_distance/OPT
             field.drone.reset()
             
             # --- MEAN-HEDGE ---
             for req in field.requests:
                 field.drone.mean_hedge_algorithm(req.x)
-            sigma_stats["MEAN-HEDGE"] += field.drone.total_distance/competive_ratio
+            sigma_stats["MEAN-HEDGE"] += field.drone.total_distance/OPT
             field.drone.reset()
             
             # --- LEARNING BETA UP ---
             for req in field.requests:
                 field.drone.learning_beta_up_algorithm(req.x)
-            sigma_stats["LEARNING BETA UP"] += field.drone.total_distance/competive_ratio
+            sigma_stats["LEARNING BETA UP"] += field.drone.total_distance/OPT
             field.drone.reset()
             
             # --- LEARNING GREEDY UP ---
             for req in field.requests:
                 field.drone.learning_greedy_up_algorithm(req.x)
-            sigma_stats["LEARNING GREEDY UP"] += field.drone.total_distance/competive_ratio
+            sigma_stats["LEARNING GREEDY UP"] += field.drone.total_distance/OPT
             field.drone.reset()
 
             for req in field.requests:
                 field.drone.MWU_algorithm(req.x)
-            sigma_stats["MWU"] += field.drone.total_distance/competive_ratio
+            sigma_stats["MWU"] += field.drone.total_distance/OPT
             field.drone.reset()
 
-        # 3. Усредняем результаты за k прогонов и добавляем в финальную статистику
         for algo in stats.keys():
             stats[algo].append(sigma_stats[algo] / k)
         
