@@ -57,20 +57,7 @@ if __name__ == "__main__":
     ax3.plot(x,y, label="BETA-HEDGE")
     
     
-    field.drone.reset()
-    print("=== MEAN-HEDGE algorithm test ===")
-    for i, req in enumerate(field.requests):
-        print(f"iteration {i}:")
-        field.drone.mean_hedge_algorithm(req.x)
-
-
-    x,y = zip(*field.drone.movement_track)
     
-    dist_median = field.drone.total_distance
-    
-    ax3.plot(x,y, label="MEAN-HEDGE")
-    
-     
     field.drone.reset()
     print("=== LEARNING BETA UP algorithm test ===")
     for i, req in enumerate(field.requests):
@@ -115,7 +102,6 @@ if __name__ == "__main__":
     # print(f"STRAIGHT-UP:  {dist_straight:.2f}")
     # print(f"GREEDY:       {dist_greedy:.2f}")
     # print(f"BETA-HEDGE:   {dist_beta:.2f}")
-    # print(f"MEAN-HEDGE: {dist_median:.2f}")
     # print(f"LEARNING BETA UP: {dist_LBA:.2f}")
     # print(f"LEARNING GREEDY UP: {dist_LGA:.2f}")
     # print("="*30 + "\n")
@@ -138,7 +124,6 @@ if __name__ == "__main__":
         "STRAIGHT-UP": [],
         "GREEDY": [],
         "BETA-HEDGE": [],
-        "MEAN-HEDGE": [],
         "LEARNING BETA UP": [],
         "LEARNING GREEDY UP": [],
         "MWU": [] }
@@ -173,12 +158,6 @@ if __name__ == "__main__":
             for req in field.requests:
                 field.drone.beta_hedge_algorithm(req.x)
             sigma_stats["BETA-HEDGE"] += field.drone.total_distance/OPT
-            field.drone.reset()
-            
-            # --- MEAN-HEDGE ---
-            for req in field.requests:
-                field.drone.mean_hedge_algorithm(req.x)
-            sigma_stats["MEAN-HEDGE"] += field.drone.total_distance/OPT
             field.drone.reset()
             
             # --- LEARNING BETA UP ---
@@ -220,7 +199,6 @@ if __name__ == "__main__":
         "STRAIGHT-UP": [],
         "GREEDY": [],
         "BETA-HEDGE": [],
-        "MEAN-HEDGE": [],
         "LEARNING BETA UP": [],
         "LEARNING GREEDY UP": [],
         "MWU": []}
@@ -252,12 +230,6 @@ if __name__ == "__main__":
             for req in field.requests:
                 field.drone.beta_hedge_algorithm(req.x)
             sigma_stats["BETA-HEDGE"] += field.drone.total_distance/OPT
-            field.drone.reset()
-            
-            # --- MEAN-HEDGE ---
-            for req in field.requests:
-                field.drone.mean_hedge_algorithm(req.x)
-            sigma_stats["MEAN-HEDGE"] += field.drone.total_distance/OPT
             field.drone.reset()
             
             # --- LEARNING BETA UP ---
