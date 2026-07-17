@@ -87,12 +87,14 @@ class Drone:
         return (math.tan(self.alpha)+(1+2*r)*math.tan(self.beta)) / (((math.tan(self.alpha)+math.tan(self.beta))**2)*math.cos(self.beta))
         
         
-    def beta_hedge_algorithm(self, target_x):
-
-        self.beta = math.pi/9.666
-        
-        L = self.min_x_seen = min(self.min_x_seen,target_x)
-        R = self.max_x_seen = max(self.max_x_seen,target_x)
+    def beta_hedge_algorithm(self, target_x, custom_beta=None):
+        if custom_beta is not None:
+            self.beta = custom_beta
+        else:
+            self.beta = math.pi/9.666
+            
+        L = self.min_x_seen = min(self.min_x_seen, target_x)
+        R = self.max_x_seen = max(self.max_x_seen, target_x)
         
         current_coverage = self.get_coverage_radius()
         
@@ -103,7 +105,7 @@ class Drone:
         direction = 1 if apex_x > self.x else -1
         
         c = math.tan(self.alpha)
-        k= math.tan(self.beta)
+        k = math.tan(self.beta)
         
         if direction == 1:
             y_left = (self.x - L - self.y * k) / (c - k)
@@ -113,19 +115,20 @@ class Drone:
             y_right = (R - self.x - self.y * k) / (c - k)
         
         target_y = max(max(y_left, y_right), self.y)
-
         target_x_final = self.x + direction * (target_y - self.y) * k
 
         self.move_zigzag(target_x_final, target_y)
         
         
-    def mean_hedge_algorithm(self, target_x):
-        
-        self.beta = math.pi/9.666
-
+    def learning_beta_up_algorithm(self, target_x, custom_beta=None):
+        if custom_beta is not None:
+            self.beta = custom_beta
+        else:
+            self.beta = math.pi/9.666
+            
         self.drone_memory.append(target_x)
-        L = self.min_x_seen = min(self.min_x_seen,target_x)
-        R = self.max_x_seen = max(self.max_x_seen,target_x)
+        L = self.min_x_seen = min(self.min_x_seen, target_x)
+        R = self.max_x_seen = max(self.max_x_seen, target_x)
         
         current_coverage = self.get_coverage_radius()
         
@@ -133,39 +136,7 @@ class Drone:
             return
         
         c = math.tan(self.alpha)
-        k= math.tan(self.beta)
-        
-        mean = statistics.mean(self.drone_memory)
-        direction = 1 if mean >= self.x else -1
-     
-        if direction == 1:
-            y_left = (self.x - L - self.y * k) / (c - k)
-            y_right = (R - self.x + self.y * k) / (c + k)
-        else:
-            y_left = (self.x - L + self.y * k) / (c + k)
-            y_right = (R - self.x - self.y * k) / (c - k)
-            
-        target_y = max(max(y_left, y_right), self.y)
-
-        target_x_final = self.x + direction * (target_y - self.y) * k
-        self.move_zigzag(target_x_final, target_y)
-        
-    def learning_beta_up_algorithm(self, target_x):
-
-        self.beta = math.pi/9.666
-        
-        self.drone_memory.append(target_x)
-        L = self.min_x_seen = min(self.min_x_seen,target_x)
-        R = self.max_x_seen = max(self.max_x_seen,target_x)
-        
-        current_coverage = self.get_coverage_radius()
-        
-        if self.x - current_coverage <= self.min_x_seen and self.x + current_coverage >= self.max_x_seen:
-            return
-        
-        c= math.tan(self.alpha)
-        k= math.tan(self.beta)
-        
+        k = math.tan(self.beta)
          
         mean = statistics.mean(self.drone_memory)
         direction = 1 if mean >= self.x else -1
@@ -181,7 +152,6 @@ class Drone:
 
         x_beta = self.x + direction * (target_y - self.y) * k
         
-        
         x = mean
         
         if (self.x <= mean and mean <= x_beta):
@@ -191,43 +161,35 @@ class Drone:
             y = (x-L)/c
             self.move_zigzag(x,y)
         else:
-            self.beta_hedge_algorithm(target_x)
+            self.beta_hedge_algorithm(target_x, custom_beta)
         return
-        
-        
-        
+
+
     def learning_greedy_up_algorithm(self, target_x):
         
         self.drone_memory.append(target_x)
-        L = self.min_x_seen = min(self.min_x_seen,target_x)
-        R = self.max_x_seen = max(self.max_x_seen,target_x)
+        L = self.min_x_seen = min(self.min_x_seen, target_x)
+        R = self.max_x_seen = max(self.max_x_seen, target_x)
         
         current_coverage = self.get_coverage_radius()
         
         if self.x - current_coverage <= self.min_x_seen and self.x + current_coverage >= self.max_x_seen:
             return
         
-        c= math.tan(self.alpha)
-        k= math.tan(self.beta)
-        
-         
+        c = math.tan(self.alpha)
         mean = statistics.mean(self.drone_memory)
-        
         apex_x = (self.min_x_seen + self.max_x_seen) / 2.0
-        
         
         x = mean
         
-        if (self.x <= mean and mean <= apex_x):
-            y = (R - x)/c
-            self.move_zigzag(x,y)
-        elif (apex_x <= mean and mean <= self.x):
-            y = (x-L)/c
-            self.move_zigzag(x,y)
+        if self.x <= mean and mean <= apex_x:
+            y = (R - x) / c
+            self.move_zigzag(x, y)
+        elif apex_x <= mean and mean <= self.x:
+            y = (x - L) / c
+            self.move_zigzag(x, y)
         else:
             self.greedy_algorithm(target_x)
-        return
-        
 
     def MWU_algorithm(self, target_x):
         self.drone_memory.append(target_x)
@@ -243,6 +205,7 @@ class Drone:
         probabilities = [w / total_weight for w in self.weights]
         
         chosen_idx = np.random.choice(len(self.angles), p=probabilities)
+        # chosen_idx = np.argmax(self.weights)
         self.beta = self.angles[chosen_idx]
 
         apex_x = (self.min_x_seen + self.max_x_seen) / 2.0
