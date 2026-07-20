@@ -98,7 +98,7 @@ if __name__ == "__main__":
         "LEARNING ML": [] # Добавили ML
     }
     
-    mu_samples = [0, 10, 100, 500, 650]
+    mu_samples = [0, 10, 100, 300, 500]
     k = 100 
 
     for mu in mu_samples:
