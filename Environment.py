@@ -13,18 +13,7 @@ class Environment:
         
     def spawn_requests(self, nb_requests, mu, sig):
         self.requests = [Request(random.gauss(mu,sig),self.AOV) for _ in range(nb_requests)]
-        # self.requests.sort(key=lambda req: abs(req.x))
-        # data = np.array(self.requests)
-        # normalized = (data - np.min(data)) / (np.max(data) - np.min(data))
-        # self.requests = normalized.tolist()       #mb doesnt work
 
-    # def OPT(self):
-    #         L = min([req.x for req in self.requests])
-    #         R = max([req.x for req in self.requests])
-
-    #         c = 1/math.tan(self.drone.alpha)
-            
-    #         return 1/2 * math.sqrt(((R - L)**2)*c**2 + (R + L)**2)
     
     def OPT(self):
         # На самом деле функция возвращает opt_cost (идеальную дистанцию), 

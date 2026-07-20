@@ -1,6 +1,8 @@
 import math
 import statistics
 import numpy as np
+import torch
+from BetaPredictorMLP import BetaPredictorMLP
 
 class Request:
     
@@ -23,6 +25,11 @@ class Drone:
         self.angles = np.linspace(0, self.alpha * 0.90, 10)
         self.weights = [1.0] * len(self.angles)
         self.eta = 0.1
+
+        
+        self.ml_model = BetaPredictorMLP()
+        self.ml_model.load_state_dict(torch.load('trained_beta_predictor.pth'))
+        self.ml_model.eval()
 
         
     def reset(self):
@@ -247,6 +254,32 @@ class Drone:
 
         self.move_zigzag(chosen_target_x, chosen_target_y)
 
+
+    def learning_ml_algorithm(self, target_x, n, current_mu, current_sigma):
+        """
+        Алгоритм, который использует нейросеть для предсказания идеального угла beta.
+        """
+
+        
+        # 1. Формируем тензор входных данных для нейросети
+        # Обязательно переводим числа в float32, как ожидает PyTorch
+        x_tensor = torch.tensor([
+            float(n) / 1000.0, 
+            float(current_mu) / 1000.0, 
+            float(current_sigma) / 1000.0
+        ], dtype=torch.float32)
+        
+        # 2. Просим нейросеть предсказать угол beta
+        # torch.no_grad() отключает расчет градиентов (экономит память и ускоряет работу)
+        with torch.no_grad():
+            predicted_beta = self.ml_model(x_tensor).item()
+            
+        # 3. На всякий случай ограничиваем угол здравым смыслом (от 0 до alpha)
+        # Нейросеть иногда может выдать легкую погрешность вроде -0.01
+        valid_beta = max(0.0, min(predicted_beta, self.alpha * 0.99))
+        
+        # 4. Передаем предсказанный угол в ваш уже существующий алгоритм beta-hedge
+        self.learning_beta_up_algorithm(target_x, custom_beta=valid_beta)
         
 
 
