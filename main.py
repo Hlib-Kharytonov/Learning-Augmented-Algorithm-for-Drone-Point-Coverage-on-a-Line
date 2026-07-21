@@ -98,7 +98,7 @@ if __name__ == "__main__":
         "LEARNING ML": [] # Добавили ML
     }
     
-    mu_samples = [0, 10, 100, 300, 500]
+    mu_samples = [0, 10, 100, 200, 300, 400, 500]
     k = 100 
 
     for mu in mu_samples:
@@ -170,7 +170,7 @@ if __name__ == "__main__":
         "LEARNING ML": [] # Добавили ML
     }
     
-    sigma_samples = [10, 50, 100, 150, 300]
+    sigma_samples = [10, 50, 100, 150, 200, 250, 300]
 
     for sigma in sigma_samples:
         sigma_stats = {algo: 0 for algo in stats.keys()}

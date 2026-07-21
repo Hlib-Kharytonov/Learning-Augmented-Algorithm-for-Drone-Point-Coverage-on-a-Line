@@ -1,7 +1,6 @@
 import math
 import random
 from models import Request, Drone
-import numpy as np
 
 class Environment:
     AOV = math.pi/4 # <-- CHANGE AOV HERE

@@ -1,8 +1,10 @@
+import os
 import math
 import statistics
 import numpy as np
 import torch
-from BetaPredictorMLP import BetaPredictorMLP
+from Supervised_Learning.BetaPredictorMLP import BetaPredictorMLP
+
 
 class Request:
     
@@ -28,7 +30,11 @@ class Drone:
 
         
         self.ml_model = BetaPredictorMLP()
-        self.ml_model.load_state_dict(torch.load('trained_beta_predictor.pth'))
+
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        model_path = os.path.join(current_dir, 'Supervised_Learning', 'trained_beta_predictor.pth')
+        self.ml_model.load_state_dict(torch.load(model_path))
+        
         self.ml_model.eval()
 
         

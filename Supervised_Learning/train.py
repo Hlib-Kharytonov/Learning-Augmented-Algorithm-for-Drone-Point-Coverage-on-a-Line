@@ -4,8 +4,8 @@ import torch.optim as optim
 from torch.utils.data import DataLoader, random_split
 
 # Импортируем ваши классы из других файлов
-from DroneDataset import DroneDataset
-from BetaPredictorMLP import BetaPredictorMLP
+from Supervised_Learning.DroneDataset import DroneDataset
+from Supervised_Learning.BetaPredictorMLP import BetaPredictorMLP
 
 def train_model():
     # 1. Загрузка данных
