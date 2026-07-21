@@ -255,39 +255,48 @@ class Drone:
         self.move_zigzag(chosen_target_x, chosen_target_y)
 
 
-    def learning_ml_algorithm(self, target_x, n, current_mu, current_sigma):
-        # Безопасный расчет CV
-        cv_raw = float(current_sigma) / (float(current_mu) + 1.0)
+
+    def learning_ml_algorithm(self, target_x):
+        # 1. Пополняем память дрона новой точкой
+        self.drone_memory.append(abs(target_x))
+        current_n = len(self.drone_memory)
+
+        # ==========================================
+        # 2. ФАЗА "РАЗВЕДКИ" (Cold Start)
+        # Если точек мало (< 20), статистика (mu, sigma) будет прыгать как сумасшедшая.
+        # Кроме того, нейросеть обучалась на n >= 50. 
+        # Поэтому пока летим по безопасной базовой стратегии (например, прямо).
+        # ==========================================
+        if current_n < 20:
+            self.learning_beta_up_algorithm(target_x)
+            return
+
+        # ==========================================
+        # 3. ФАЗА "ML-АДАПТАЦИИ" (Exploit)
+        # Накопили историю. Считаем текущую реальность всем миром.
+        # ==========================================
+        estimated_mu = sum(self.drone_memory) / current_n
+
+        variance = sum((x - estimated_mu)**2 for x in self.drone_memory) / (current_n - 1)
+        estimated_sigma = math.sqrt(variance)
+
+        cv_raw = float(estimated_sigma) / (float(estimated_mu) + 1.0)
         cv_scaled = min(cv_raw, 20.0) / 20.0
-        
+
+        # 4. Формируем тензор на 4 параметра. 
+        # ГЕНИАЛЬНОСТЬ В ЧЕМ: Мы передаем current_n как глобальное N. 
+        # Дрон каждую секунду адаптирует плотность под то, что видит прямо сейчас.
         x_tensor = torch.tensor([
-            float(n) / 1000.0, 
-            float(current_mu) / 1000.0, 
-            float(current_sigma) / 1000.0,
+            float(current_n) / 1000.0, 
+            float(estimated_mu) / 1000.0, 
+            float(estimated_sigma) / 1000.0,
             cv_scaled
         ], dtype=torch.float32)
-        
-        # 2. Просим нейросеть предсказать угол beta
-        # torch.no_grad() отключает расчет градиентов (экономит память и ускоряет работу)
+
         with torch.no_grad():
             predicted_beta = self.ml_model(x_tensor).item()
-            
-        # 3. На всякий случай ограничиваем угол здравым смыслом (от 0 до alpha)
-        # Нейросеть иногда может выдать легкую погрешность вроде -0.01
+
         valid_beta = max(0.0, min(predicted_beta, self.alpha * 0.99))
-        
-        # 4. Передаем предсказанный угол в ваш уже существующий алгоритм beta-hedge
+
+        # 5. Применяем предсказанный ML угол к текущему шагу
         self.learning_beta_up_algorithm(target_x, custom_beta=valid_beta)
-        
-
-
-
-
-
-
-
-
-
-
-        
-        

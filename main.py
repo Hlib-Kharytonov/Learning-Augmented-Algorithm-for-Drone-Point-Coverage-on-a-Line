@@ -70,7 +70,7 @@ if __name__ == "__main__":
     print("=== LEARNING ML algorithm test ===")
     for req in field.requests:
         # Передаем известные n=500, mu=100.0, sigma=100.0 для этой тестовой выборки
-        field.drone.learning_ml_algorithm(req.x, 500, 100.0, 100.0)
+        field.drone.learning_ml_algorithm(req.x)
     x, y = zip(*field.drone.movement_track)
     dist_ML = field.drone.total_distance
     ax3.plot(x, y, label="LEARNING ML", linestyle="--", linewidth=2) # Сделал линию пунктирной, чтобы выделялась
@@ -141,7 +141,7 @@ if __name__ == "__main__":
 
             # --- LEARNING ML ---
             for req in field.requests:
-                field.drone.learning_ml_algorithm(req.x, 500, mu, 100)
+                field.drone.learning_ml_algorithm(req.x)
             sigma_stats["LEARNING ML"] += field.drone.total_distance/OPT
             field.drone.reset()
 
@@ -212,7 +212,7 @@ if __name__ == "__main__":
 
             # --- LEARNING ML ---
             for req in field.requests:
-                field.drone.learning_ml_algorithm(req.x, 500, 100, sigma)
+                field.drone.learning_ml_algorithm(req.x)
             sigma_stats["LEARNING ML"] += field.drone.total_distance/OPT
             field.drone.reset()
 
