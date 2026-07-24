@@ -3,13 +3,13 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader, random_split
 
-from Supervised_Learning.DroneDataset import DroneDataset
-from Supervised_Learning.BetaPredictorMLP import BetaPredictorMLP
+from DroneDataset import DroneDataset
+from BetaPredictorMLP import BetaPredictorMLP
 
 def train_model():
     
     print("Data loading...")
-    dataset = DroneDataset('drone_dataset.csv')
+    dataset = DroneDataset('Supervised_Learning/drone_dataset.csv')
     
     # divide the dataset into training and testing sets (80% for training, 20% for testing)
     train_size = int(0.8 * len(dataset))
@@ -55,7 +55,7 @@ def train_model():
             print(f"Epoch [{epoch+1}/{epochs}] | Loss: {avg_loss:.4f}")
             
     # 5. save the trained model weights to a .pth file for later use
-    torch.save(model.state_dict(), 'trained_beta_predictor.pth')
+    torch.save(model.state_dict(), 'Supervised_Learning/trained_beta_predictor.pth')
     print("Training completed! Model weights saved to 'trained_beta_predictor.pth'")
 
 if __name__ == "__main__":

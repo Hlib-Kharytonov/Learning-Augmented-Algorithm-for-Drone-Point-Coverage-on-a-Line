@@ -7,9 +7,9 @@ class DroneDataset(Dataset):
     def __init__(self, csv_file):
         self.data = pd.read_csv(csv_file)
         
-        n_scaled = self.data['n'].values / 1000.0
-        mu_scaled = self.data['mu'].values / 1000.0
-        sigma_scaled = self.data['sigma'].values / 1000.0
+        n_scaled = self.data['n'].values / 1024.0
+        mu_scaled = self.data['mu'].values / 1024.0
+        sigma_scaled = self.data['sigma'].values / 1024.0
         
         # coefficient of variation (CV) is defined as the ratio of the standard deviation to the mean
         cv_raw = self.data['sigma'].values / (self.data['mu'].values + 1.0)

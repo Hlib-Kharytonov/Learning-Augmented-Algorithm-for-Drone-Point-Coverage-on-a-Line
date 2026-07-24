@@ -263,24 +263,22 @@ class Drone:
 
 
     def learning_ml_algorithm(self, target_x):
-        # 1. Пополняем память дрона новой точкой
+        # 1. add the new point to the drone's memory
         self.drone_memory.append(abs(target_x))
         current_n = len(self.drone_memory)
 
         # ==========================================
-        # 2. ФАЗА "РАЗВЕДКИ" (Cold Start)
-        # Если точек мало (< 20), статистика (mu, sigma) будет прыгать как сумасшедшая.
-        # Кроме того, нейросеть обучалась на n >= 50. 
-        # Поэтому пока летим по безопасной базовой стратегии (например, прямо).
-        # ==========================================
+        # 2. EXPLORATION PHASE (Explore)
+        # If we don't have enough data, we use the learning_beta_up_algorithm to explore the environment and gather more information.
+        # ==========================================    
         if current_n < 20:
             self.learning_beta_up_algorithm(target_x)
             return
 
-        # ==========================================
-        # 3. ФАЗА "ML-АДАПТАЦИИ" (Exploit)
-        # Накопили историю. Считаем текущую реальность всем миром.
-        # ==========================================
+        # ===========================================
+        # 3. EXPLOITATION PHASE (Exploit)
+        # Once we have enough data, we use the trained ML model to predict the best beta angle based on the current state of the environment.
+        # ===========================================   
         estimated_mu = sum(self.drone_memory) / current_n
 
         variance = sum((x - estimated_mu)**2 for x in self.drone_memory) / (current_n - 1)
@@ -289,13 +287,12 @@ class Drone:
         cv_raw = float(estimated_sigma) / (float(estimated_mu) + 1.0)
         cv_scaled = min(cv_raw, 20.0) / 20.0
 
-        # 4. Формируем тензор на 4 параметра. 
-        # ГЕНИАЛЬНОСТЬ В ЧЕМ: Мы передаем current_n как глобальное N. 
-        # Дрон каждую секунду адаптирует плотность под то, что видит прямо сейчас.
+        # 4. Prepare the input tensor for the ML model and make a prediction
+        # The input tensor consists of the scaled values of n, mu, sigma, and the coefficient of variation (CV). The ML model then predicts the best beta angle based on these features.
         x_tensor = torch.tensor([
-            float(current_n) / 1000.0, 
-            float(estimated_mu) / 1000.0, 
-            float(estimated_sigma) / 1000.0,
+            float(current_n) / 1024.0, 
+            float(estimated_mu) / 1024.0, 
+            float(estimated_sigma) / 1024.0,
             cv_scaled
         ], dtype=torch.float32)
 
@@ -304,5 +301,5 @@ class Drone:
 
         valid_beta = max(0.0, min(predicted_beta, self.alpha * 0.99))
 
-        # 5. Применяем предсказанный ML угол к текущему шагу
+        # 5. Apply the predicted ML angle to the current step
         self.learning_beta_up_algorithm(target_x, custom_beta=valid_beta)
