@@ -20,16 +20,15 @@ def generate_data():
 
     print(f"Starting dataset generation ({total_iterations} combinations). This will take some time...")
 
-    # 2. Перебираем все возможные комбинации
     for n in n_values:
         for mu in mu_values:
             for sigma in sigma_values:
                 current_iter += 1
                 best_betas_for_this_setup = []
                 
-                # Для надежности прогоняем каждую комбинацию 5 раз
+
                 for _ in range(5):
-                    # Генерируем новый кластер точек
+                    
                     env.spawn_requests(n, mu, sigma)
                     
                     best_beta = 0

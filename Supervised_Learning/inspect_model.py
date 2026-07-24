@@ -1,6 +1,6 @@
 import torch
 
-weights = torch.load('trained_beta_predictor.pth')
+weights = torch.load('Supervised_Learning/trained_beta_predictor.pth')
 
 print("Content of the .pth file:")
 print("-" * 30)
