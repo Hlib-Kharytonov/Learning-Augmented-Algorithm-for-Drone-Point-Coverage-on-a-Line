@@ -31,9 +31,9 @@ def train_model():
     
     epochs = 300 # how many times we go through the entire dataset during training
     
-    print("Начинаем обучение...")
+    print("Starting training the model...")
     
-    # 4. Главный цикл обучения
+    # 4. Main training loop
     for epoch in range(epochs):
         model.train() # train mode enables features like dropout and batch normalization
         running_loss = 0.0
