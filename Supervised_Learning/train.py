@@ -20,7 +20,7 @@ def train_model():
     train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
     
-    # 2. Инициализация нейросети
+    # 2. nn initializes the model architecture defined in BetaPredictorMLP
     model = BetaPredictorMLP()
     
     # 3. Setup loss function and optimizer
@@ -54,7 +54,7 @@ def train_model():
             avg_loss = running_loss / len(train_loader)
             print(f"Epoch [{epoch+1}/{epochs}] | Loss: {avg_loss:.4f}")
             
-    # 5. Сохраняем "мозг" на жесткий диск
+    # 5. save the trained model weights to a .pth file for later use
     torch.save(model.state_dict(), 'trained_beta_predictor.pth')
     print("Training completed! Model weights saved to 'trained_beta_predictor.pth'")
 
